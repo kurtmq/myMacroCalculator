@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Recipe - Meal Cost Calculator</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'MC_App/css/style.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="header-links">
+        <h1>Edit Recipe</h1>
+        <a href="{% url 'recipe_list' %}" class="btn btn-secondary">← Back to Recipes</a>
+    </div>
+
+    <div class="card">
+        <form id="recipeForm" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="recipeName">Recipe Name</label>
+                <input type="text" id="recipeName" name="name" value="{{ recipe.name }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="recipeNotes">Notes</label>
+                <textarea id="recipeNotes" name="notes" rows="3">{{ recipe.notes }}</textarea>
+            </div>
+
+            <div class="section-header">
+                <h3>Recipe Items</h3>
+            </div>
+
+            <table id="ingredientsTable">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Amount</th>
+                        <th>Calories</th>
+                        <th>Protein</th>
+                        <th>Carbs</th>
+                        <th>Fat</th>
+                        <th>Price</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in recipe_items %}
+                        {% if item.ingredient %}
+                        <tr data-type="ingredient" 
+                            data-id="{{ item.ingredient.id }}" 
+                            data-base-calories="{{ item.ingredient.calories }}"
+                            data-base-protein="{{ item.ingredient.protein }}"
+                            data-base-carbs="{{ item.ingredient.carbs }}"
+                            data-base-fat="{{ item.ingredient.fat }}"
+                            data-base-price="{{ item.ingredient.price_per_serving }}"
+                            data-serving-value="{{ item.ingredient.serving_size_value }}"
+                            data-serving-unit="{{ item.ingredient.serving_size_unit }}">
+                            <td>{{ item.ingredient.name }}</td>
+                            <td>
+                                <input type="number" class="servingInput" 
+                                       value="{{ item.quantity|floatformat:2 }}" step="0.1" min="0"> 
+                                <span>{{ item.ingredient.get_serving_size_unit_display }}</span>
+                            </td>
+                            <td class="calories">{{ item.ingredient.calories|floatformat:1 }}</td>
+                            <td class="protein">{{ item.ingredient.protein|floatformat:1 }}</td>
+                            <td class="carbs">{{ item.ingredient.carbs|floatformat:1 }}</td>
+                            <td class="fat">{{ item.ingredient.fat|floatformat:1 }}</td>
+                            <td class="price">₱{{ item.ingredient.price_per_serving|floatformat:2 }}</td>
+                            <td><button type="button" class="removeBtn">×</button></td>
+                        </tr>
+                        {% elif item.sub_recipe %}
+                        <tr data-type="recipe"
+                            data-id="{{ item.sub_recipe.id }}"
+                            data-base-calories="{{ item.sub_recipe.total_calories }}"
+                            data-base-protein="{{ item.sub_recipe.total_protein }}"
+                            data-base-carbs="{{ item.sub_recipe.total_carbs }}"
+                            data-base-fat="{{ item.sub_recipe.total_fat }}"
+                            data-base-price="{{ item.sub_recipe.total_price }}">
+                            <td><em>{{ item.sub_recipe.name }} (Recipe)</em></td>
+                            <td>
+                                <input type="number" class="servingInput" 
+                                       value="{{ item.quantity|floatformat:2 }}" step="0.1" min="0"> ×
+                            </td>
+                            <td class="calories">{{ item.sub_recipe.total_calories|floatformat:1 }}</td>
+                            <td class="protein">{{ item.sub_recipe.total_protein|floatformat:1 }}</td>
+                            <td class="carbs">{{ item.sub_recipe.total_carbs|floatformat:1 }}</td>
+                            <td class="fat">{{ item.sub_recipe.total_fat|floatformat:1 }}</td>
+                            <td class="price">₱{{ item.sub_recipe.total_price|floatformat:2 }}</td>
+                            <td><button type="button" class="removeBtn">×</button></td>
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="flex-between mt-8">
+                <a href="{% url 'recipe_delete' recipe.id %}" class="btn btn-danger">Delete Recipe</a>
+                <button type="submit" class="btn">Save Changes</button>
+            </div>
+
+            <input type="hidden" name="items" id="itemsField">
+            <input type="hidden" name="recipe_items" id="recipeItemsField">
+        </form>
+    </div>
+</div>
+
+<script src="{% static 'MC_App/js/recipe_form.js' %}"></script>
+</body>
+</html>

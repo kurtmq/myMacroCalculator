@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipes - Meal Cost Calculator</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'MC_App/css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="header-links">
+            <h1>Recipes</h1>
+            <a href="{% url 'recipe_create' %}" class="btn">+ Create New Recipe</a>
+        </div>
+
+        {% if recipes %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Calories</th>
+                        <th>Protein</th>
+                        <th>Carbs</th>
+                        <th>Fat</th>
+                        <th>Price</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in recipes %}
+                    <tr class="clickable-row" data-href="{% url 'recipe_edit' r.id %}" style="cursor:pointer;">
+                        <td><strong>{{ r.name }}</strong></td>
+                        <td>{{ r.total_calories|floatformat:1 }}</td>
+                        <td>{{ r.total_protein|floatformat:1 }}g</td>
+                        <td>{{ r.total_carbs|floatformat:1 }}g</td>
+                        <td>{{ r.total_fat|floatformat:1 }}g</td>
+                        <td><strong>₱{{ r.total_price|floatformat:2 }}</strong></td>
+                        <td>
+                            {% if r.notes %}
+                                <small style="color: var(--text-muted);">{{ r.notes|truncatewords:3 }}</small>
+                            {% else %}
+                                <span style="color: var(--text-muted);">—</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty-state">
+                <p>No recipes yet.</p>
+                <a href="{% url 'recipe_create' %}" class="btn">+ Create Your First Recipe</a>
+            </div>
+        {% endif %}
+
+        <div style="text-align: center; padding-top: 24px; border-top: 1px solid var(--border-color);">
+            <a href="{% url 'ingredient_list' %}" class="nav-link">Go to Ingredients →</a>
+        </div>
+    </div>
+</body>
+<script>
+  // run after the DOM loads
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.clickable-row').forEach(function(row) {
+      row.addEventListener('click', function() {
+        window.location = this.dataset.href;
+      });
+    });
+  });
+</script>
+</html>

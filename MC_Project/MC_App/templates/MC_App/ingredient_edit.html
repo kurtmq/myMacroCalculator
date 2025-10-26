@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Ingredient - Meal Cost Calculator</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'MC_App/css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Ingredient</h1>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" name="name" value="{{ ingredient.name }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Serving Size</label>
+                <input type="number" step="any" name="serving_size_value" value="{{ ingredient.serving_size_value }}" required>
+                <select name="serving_size_unit">
+                    <option value="g" {% if ingredient.serving_size_unit == "g" %}selected{% endif %}>grams (g)</option>
+                    <option value="ml" {% if ingredient.serving_size_unit == "ml" %}selected{% endif %}>milliliters (ml)</option>
+                    <option value="piece" {% if ingredient.serving_size_unit == "piece" %}selected{% endif %}>piece</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Servings per Container</label>
+                <input type="number" step="any" name="servings_per_container" value="{{ ingredient.servings_per_container }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Price (₱)</label>
+                <input type="number" step="any" name="price" value="{{ ingredient.price }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Calories</label>
+                <input type="number" step="any" name="calories" value="{{ ingredient.calories }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Protein (g)</label>
+                <input type="number" step="any" name="protein" value="{{ ingredient.protein }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Carbs (g)</label>
+                <input type="number" step="any" name="carbs" value="{{ ingredient.carbs }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Fat (g)</label>
+                <input type="number" step="any" name="fat" value="{{ ingredient.fat }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Notes</label>
+                <textarea name="notes">{{ ingredient.notes }}</textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn"> Save Changes</button>
+                <a href="{% url 'ingredient_delete' ingredient.id %}" class="btn btn-danger" style="background-color:#e74c3c; color:white;">Delete Ingredient</a>
+                <a href="{% url 'ingredient_list' %}"  class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

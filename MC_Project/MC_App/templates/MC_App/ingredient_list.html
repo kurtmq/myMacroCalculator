@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingredients - Meal Cost Calculator</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'MC_App/css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="header-links">
+            <h1>Ingredients</h1>
+            <a href="{% url 'ingredient_create' %}" class="btn">+ Add Ingredient</a>
+        </div>
+
+        {% if ingredients %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Serving Size</th>
+                        <th>Servings</th>
+                        <th>Price</th>
+                        <th>Price/Serving</th>
+                        <th>Calories</th>
+                        <th>Protein</th>
+                        <th>Carbs</th>
+                        <th>Fat</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in ingredients %}
+                    <tr class="clickable-row" data-href="{% url 'ingredient_edit' i.id %}" style="cursor:pointer;">
+                        <td><strong>{{ i.name }}</strong></td>
+                        <td>{{ i.serving_size_value }} {{ i.get_serving_size_unit_display }}</td>
+                        <td>{{ i.servings_per_container }}</td>
+                        <td>₱{{ i.price|floatformat:2 }}</td>
+                        <td><strong>₱{{ i.price_per_serving|floatformat:2 }}</strong></td>
+                        <td>{{ i.calories }}</td>
+                        <td>{{ i.protein }}g</td>
+                        <td>{{ i.carbs }}g</td>
+                        <td>{{ i.fat }}g</td>
+                        <td>
+                            {% if i.notes %}
+                                <small style="color: var(--text-muted);">{{ i.notes|truncatewords:3 }}</small>
+                            {% else %}
+                                <span style="color: var(--text-muted);">—</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        {% else %}
+            <div class="empty-state">
+                <p>No ingredients yet.</p>
+                <a href="{% url 'ingredient_create' %}" class="btn">+ Add Your First Ingredient</a>
+            </div>
+        {% endif %}
+
+        <div style="text-align: center; padding-top: 24px; border-top: 1px solid var(--border-color);">
+            <a href="{% url 'recipe_list' %}" class="nav-link">Go to Recipes →</a>
+        </div>
+    </div>
+</body>
+<script>
+  // run after the DOM loads
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.clickable-row').forEach(function(row) {
+      row.addEventListener('click', function() {
+        window.location = this.dataset.href;
+      });
+    });
+  });
+</script>
+</html>
