@@ -155,8 +155,28 @@ def recipe_edit(request, pk):
         messages.success(request, f'Recipe "{recipe.name}" updated successfully.')
         return redirect('recipe_list')
 
-    # Preload the current recipe items
-    recipe_items = recipe.items.all()
+    # Preload and calculate display values for recipe items
+    recipe_items = []
+    for item in recipe.items.all():
+        if item.ingredient:
+            # Calculate display values for ingredients
+            calculated_amount = item.quantity * item.ingredient.serving_size_value
+            item.display_amount = round(calculated_amount, 1)
+            item.display_calories = round(item.ingredient.calories * item.quantity, 1)
+            item.display_protein = round(item.ingredient.protein * item.quantity, 1)
+            item.display_carbs = round(item.ingredient.carbs * item.quantity, 1)
+            item.display_fat = round(item.ingredient.fat * item.quantity, 1)
+            item.display_price = round(item.ingredient.price_per_serving * item.quantity, 2)
+        elif item.sub_recipe:
+            # Calculate display values for recipes
+            item.display_amount = round(item.quantity, 1)
+            item.display_calories = round(item.sub_recipe.total_calories * item.quantity, 1)
+            item.display_protein = round(item.sub_recipe.total_protein * item.quantity, 1)
+            item.display_carbs = round(item.sub_recipe.total_carbs * item.quantity, 1)
+            item.display_fat = round(item.sub_recipe.total_fat * item.quantity, 1)
+            item.display_price = round(item.sub_recipe.total_price * item.quantity, 2)
+        recipe_items.append(item)
+
     return render(request, 'MC_App/recipe_edit.html', {
         'recipe': recipe,
         'ingredients': ingredients,

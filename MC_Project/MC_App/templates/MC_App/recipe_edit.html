@@ -29,74 +29,102 @@
             </div>
 
             <div class="section-header">
-                <h3>Recipe Items</h3>
+                <h3 style="margin-bottom: 8px;">Recipe Items</h3>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">
+                    Add ingredients or existing recipes to build your recipe
+                </p>
             </div>
 
-            <table id="ingredientsTable">
-                <thead>
-                    <tr>
-                        <th>Item</th>
-                        <th>Amount</th>
-                        <th>Calories</th>
-                        <th>Protein</th>
-                        <th>Carbs</th>
-                        <th>Fat</th>
-                        <th>Price</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in recipe_items %}
-                        {% if item.ingredient %}
-                        <tr data-type="ingredient" 
-                            data-id="{{ item.ingredient.id }}" 
-                            data-base-calories="{{ item.ingredient.calories }}"
-                            data-base-protein="{{ item.ingredient.protein }}"
-                            data-base-carbs="{{ item.ingredient.carbs }}"
-                            data-base-fat="{{ item.ingredient.fat }}"
-                            data-base-price="{{ item.ingredient.price_per_serving }}"
-                            data-serving-value="{{ item.ingredient.serving_size_value }}"
-                            data-serving-unit="{{ item.ingredient.serving_size_unit }}">
-                            <td>{{ item.ingredient.name }}</td>
-                            <td>
-                                <input type="number" class="servingInput" 
-                                       value="{{ item.quantity|floatformat:2 }}" step="0.1" min="0"> 
-                                <span>{{ item.ingredient.get_serving_size_unit_display }}</span>
-                            </td>
-                            <td class="calories">{{ item.ingredient.calories|floatformat:1 }}</td>
-                            <td class="protein">{{ item.ingredient.protein|floatformat:1 }}</td>
-                            <td class="carbs">{{ item.ingredient.carbs|floatformat:1 }}</td>
-                            <td class="fat">{{ item.ingredient.fat|floatformat:1 }}</td>
-                            <td class="price">₱{{ item.ingredient.price_per_serving|floatformat:2 }}</td>
-                            <td><button type="button" class="removeBtn">×</button></td>
+            <div class="table-container">
+                <table id="ingredientsTable">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Amount</th>
+                            <th>Calories</th>
+                            <th>Protein</th>
+                            <th>Carbs</th>
+                            <th>Fat</th>
+                            <th>Price</th>
+                            <th></th>
                         </tr>
-                        {% elif item.sub_recipe %}
-                        <tr data-type="recipe"
-                            data-id="{{ item.sub_recipe.id }}"
-                            data-base-calories="{{ item.sub_recipe.total_calories }}"
-                            data-base-protein="{{ item.sub_recipe.total_protein }}"
-                            data-base-carbs="{{ item.sub_recipe.total_carbs }}"
-                            data-base-fat="{{ item.sub_recipe.total_fat }}"
-                            data-base-price="{{ item.sub_recipe.total_price }}">
-                            <td><em>{{ item.sub_recipe.name }} (Recipe)</em></td>
-                            <td>
-                                <input type="number" class="servingInput" 
-                                       value="{{ item.quantity|floatformat:2 }}" step="0.1" min="0"> ×
-                            </td>
-                            <td class="calories">{{ item.sub_recipe.total_calories|floatformat:1 }}</td>
-                            <td class="protein">{{ item.sub_recipe.total_protein|floatformat:1 }}</td>
-                            <td class="carbs">{{ item.sub_recipe.total_carbs|floatformat:1 }}</td>
-                            <td class="fat">{{ item.sub_recipe.total_fat|floatformat:1 }}</td>
-                            <td class="price">₱{{ item.sub_recipe.total_price|floatformat:2 }}</td>
-                            <td><button type="button" class="removeBtn">×</button></td>
+                    </thead>
+                    <tbody>
+                        {% for item in recipe_items %}
+                            {% if item.ingredient %}
+                            <tr data-type="ingredient" 
+                                data-id="{{ item.ingredient.id }}" 
+                                data-base-calories="{{ item.ingredient.calories }}"
+                                data-base-protein="{{ item.ingredient.protein }}"
+                                data-base-carbs="{{ item.ingredient.carbs }}"
+                                data-base-fat="{{ item.ingredient.fat }}"
+                                data-base-price="{{ item.ingredient.price_per_serving }}"
+                                data-serving-value="{{ item.ingredient.serving_size_value }}"
+                                data-serving-unit="{{ item.ingredient.serving_size_unit }}">
+                                <td>{{ item.ingredient.name }}</td>
+                                <td class="serving-container" style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="number" class="servingInput" 
+                                           value="{{ item.display_amount }}" step="0.1" min="0"
+                                           style="width: 80px; padding: 6px; border: 1px solid var(--border-color); border-radius: 4px;">
+                                    <span class="unit-label" style="color: var(--text-muted); font-size: 13px;">{{ item.ingredient.serving_size_unit }}</span>
+                                </td>
+                                <td class="calories">{{ item.display_calories }}</td>
+                                <td class="protein">{{ item.display_protein }}</td>
+                                <td class="carbs">{{ item.display_carbs }}</td>
+                                <td class="fat">{{ item.display_fat }}</td>
+                                <td class="price">₱{{ item.display_price }}</td>
+                                <td><button type="button" class="removeBtn" style="background: #ef4444; color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer;">×</button></td>
+                            </tr>
+                            {% elif item.sub_recipe %}
+                            <tr data-type="recipe"
+                                data-id="{{ item.sub_recipe.id }}"
+                                data-base-calories="{{ item.sub_recipe.total_calories }}"
+                                data-base-protein="{{ item.sub_recipe.total_protein }}"
+                                data-base-carbs="{{ item.sub_recipe.total_carbs }}"
+                                data-base-fat="{{ item.sub_recipe.total_fat }}"
+                                data-base-price="{{ item.sub_recipe.total_price }}">
+                                <td><em>{{ item.sub_recipe.name }} (Recipe)</em></td>
+                                <td class="serving-container" style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="number" class="servingInput" 
+                                           value="{{ item.display_amount }}" step="0.1" min="0"
+                                           style="width: 80px; padding: 6px; border: 1px solid var(--border-color); border-radius: 4px;">
+                                    <span class="unit-label" style="color: var(--text-muted); font-size: 13px;">×</span>
+                                </td>
+                                <td class="calories">{{ item.display_calories }}</td>
+                                <td class="protein">{{ item.display_protein }}</td>
+                                <td class="carbs">{{ item.display_carbs }}</td>
+                                <td class="fat">{{ item.display_fat }}</td>
+                                <td class="price">₱{{ item.display_price }}</td>
+                                <td><button type="button" class="removeBtn" style="background: #ef4444; color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer;">×</button></td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr class="totals-row">
+                            <td colspan="2"><strong>Total</strong></td>
+                            <td id="totalCalories">0</td>
+                            <td id="totalProtein">0</td>
+                            <td id="totalCarbs">0</td>
+                            <td id="totalFat">0</td>
+                            <td id="totalPrice">₱0.00</td>
+                            <td></td>
                         </tr>
-                        {% endif %}
-                    {% endfor %}
-                </tbody>
-            </table>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="flex gap-4" style="margin-top: 20px; display: flex; gap: 16px;">
+                <button type="button" id="addIngredientBtn" class="btn">
+                    + Add Ingredient
+                </button>
+                <button type="button" id="addRecipeBtn" class="btn">
+                    + Add Recipe
+                </button>
+            </div>
 
             <div class="flex-between mt-8">
-                <a href="{% url 'recipe_delete' recipe.id %}" class="btn btn-danger">Delete Recipe</a>
+                <a href="{% url 'recipe_delete' recipe.id %}" class="btn btn-danger" style="background-color:#e74c3c; color:white;">Delete Recipe</a>
                 <button type="submit" class="btn">Save Changes</button>
             </div>
 
@@ -106,6 +134,314 @@
     </div>
 </div>
 
-<script src="{% static 'MC_App/js/recipe_form.js' %}"></script>
+<!-- Modal for Ingredients and Recipes -->
+<div id="itemModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalTitle">Select Item</h3>
+            <button type="button" class="close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="tab-container">
+                <button type="button" class="tab-btn active" data-tab="ingredients">Ingredients</button>
+                <button type="button" class="tab-btn" data-tab="recipes">Recipes</button>
+            </div>
+
+            <!-- Ingredients Tab -->
+            <div id="ingredients-tab" class="tab-content active">
+                <input type="text" id="searchIngredient" placeholder="Search ingredients..." 
+                       style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 6px; margin-bottom: 16px;">
+                <ul id="ingredientList">
+                    {% for ing in ingredients %}
+                    <li class="list-item ingredient-item" 
+                        data-id="{{ ing.id }}" 
+                        data-name="{{ ing.name }}"
+                        data-calories="{{ ing.calories }}" 
+                        data-protein="{{ ing.protein }}"
+                        data-carbs="{{ ing.carbs }}" 
+                        data-fat="{{ ing.fat }}"
+                        data-price="{{ ing.price_per_serving }}"
+                        data-serving-value="{{ ing.serving_size_value }}"
+                        data-serving-unit="{{ ing.serving_size_unit }}">
+                        <strong>{{ ing.name }}</strong>
+                        <small>{{ ing.calories }} kcal | {{ ing.serving_size_value }}{{ ing.serving_size_unit }} per serving</small>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Recipes Tab -->
+            <div id="recipes-tab" class="tab-content">
+                <input type="text" id="searchRecipe" placeholder="Search recipes..." 
+                       style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 6px; margin-bottom: 16px;">
+                <ul id="recipeList">
+                    {% for rec in recipes %}
+                    <li class="list-item recipe-item"
+                        data-id="{{ rec.id }}"
+                        data-name="{{ rec.name }}"
+                        data-calories="{{ rec.total_calories }}"
+                        data-protein="{{ rec.total_protein }}"
+                        data-carbs="{{ rec.total_carbs }}"
+                        data-fat="{{ rec.total_fat }}"
+                        data-price="{{ rec.total_price }}">
+                        <strong>{{ rec.name }}</strong>
+                        <small>{{ rec.total_calories|floatformat:0 }} kcal | ₱{{ rec.total_price|floatformat:2 }}</small>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const ingredientsTable = $('#ingredientsTable tbody');
+    const modal = $('#itemModal');
+    const closeModal = $('.close');
+
+    // Tab switching
+    $('.tab-btn').click(function() {
+        const tab = $(this).data('tab');
+        $('.tab-btn').removeClass('active').css({
+            'border-bottom-color': 'transparent',
+            'color': 'var(--text-muted)'
+        });
+        $(this).addClass('active').css({
+            'border-bottom-color': 'var(--accent-color)',
+            'color': 'var(--accent-color)'
+        });
+        $('.tab-content').removeClass('active').hide();
+        $(`#${tab}-tab`).addClass('active').show();
+        
+        if (tab === 'ingredients') {
+            $('#modalTitle').text('Select Ingredient');
+        } else {
+            $('#modalTitle').text('Select Recipe');
+        }
+    });
+
+    // Modal controls
+    $('#addIngredientBtn').click(() => {
+        $('.tab-btn[data-tab="ingredients"]').click();
+        modal.addClass('show');
+    });
+
+    $('#addRecipeBtn').click(() => {
+        $('.tab-btn[data-tab="recipes"]').click();
+        modal.addClass('show');
+    });
+
+    closeModal.click(() => modal.removeClass('show'));
+    $(window).click((e) => { if (e.target == modal[0]) modal.removeClass('show'); });
+
+    // Search filters
+    $('#searchIngredient').on('keyup', function() {
+        const value = $(this).val().toLowerCase();
+        $('#ingredientList li').filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+        });
+    });
+
+    $('#searchRecipe').on('keyup', function() {
+        const value = $(this).val().toLowerCase();
+        $('#recipeList li').filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+        });
+    });
+
+    // Add ingredient to table
+    $('#ingredientList').on('click', '.ingredient-item', function() {
+        const $this = $(this);
+        const ing = {
+            id: $this.data('id'),
+            name: $this.data('name'),
+            calories: parseFloat($this.data('calories')),
+            protein: parseFloat($this.data('protein')),
+            carbs: parseFloat($this.data('carbs')),
+            fat: parseFloat($this.data('fat')),
+            price: parseFloat($this.data('price')),
+            servingValue: parseFloat($this.data('serving-value')),
+            servingUnit: $this.data('serving-unit')
+        };
+        modal.removeClass('show');
+        addIngredientRow(ing);
+        updateTotals();
+    });
+
+    // Add recipe to table
+    $('#recipeList').on('click', '.recipe-item', function() {
+        const $this = $(this);
+        const recipe = {
+            id: $this.data('id'),
+            name: $this.data('name'),
+            calories: parseFloat($this.data('calories')),
+            protein: parseFloat($this.data('protein')),
+            carbs: parseFloat($this.data('carbs')),
+            fat: parseFloat($this.data('fat')),
+            price: parseFloat($this.data('price'))
+        };
+        modal.removeClass('show');
+        addRecipeRow(recipe);
+        updateTotals();
+    });
+
+    // Add ingredient row with unit-based input
+    function addIngredientRow(ing) {
+        const row = $(`
+            <tr data-type="ingredient"
+                data-id="${ing.id}" 
+                data-base-calories="${ing.calories}" 
+                data-base-protein="${ing.protein}" 
+                data-base-carbs="${ing.carbs}" 
+                data-base-fat="${ing.fat}" 
+                data-base-price="${ing.price}"
+                data-serving-value="${ing.servingValue}"
+                data-serving-unit="${ing.servingUnit}">
+                <td>${ing.name}</td>
+                <td class="serving-container" style="display: flex; align-items: center; gap: 8px;">
+                    <input type="number" class="servingInput" value="${ing.servingValue}" step="0.1" min="0" 
+                           style="width: 80px; padding: 6px; border: 1px solid var(--border-color); border-radius: 4px;">
+                    <span class="unit-label" style="color: var(--text-muted); font-size: 13px;">${ing.servingUnit}</span>
+                </td>
+                <td class="calories">${ing.calories.toFixed(1)}</td>
+                <td class="protein">${ing.protein.toFixed(1)}</td>
+                <td class="carbs">${ing.carbs.toFixed(1)}</td>
+                <td class="fat">${ing.fat.toFixed(1)}</td>
+                <td class="price">₱${ing.price.toFixed(2)}</td>
+                <td><button type="button" class="removeBtn" style="background: #ef4444; color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer;">×</button></td>
+            </tr>
+        `);
+        ingredientsTable.append(row);
+    }
+
+    // Add recipe row
+    function addRecipeRow(recipe) {
+        const row = $(`
+            <tr data-type="recipe"
+                data-id="${recipe.id}" 
+                data-base-calories="${recipe.calories}" 
+                data-base-protein="${recipe.protein}" 
+                data-base-carbs="${recipe.carbs}" 
+                data-base-fat="${recipe.fat}" 
+                data-base-price="${recipe.price}">
+                <td><em>${recipe.name} (Recipe)</em></td>
+                <td class="serving-container" style="display: flex; align-items: center; gap: 8px;">
+                    <input type="number" class="servingInput" value="1" step="0.1" min="0" 
+                           style="width: 80px; padding: 6px; border: 1px solid var(--border-color); border-radius: 4px;">
+                    <span class="unit-label" style="color: var(--text-muted); font-size: 13px;">×</span>
+                </td>
+                <td class="calories">${recipe.calories.toFixed(1)}</td>
+                <td class="protein">${recipe.protein.toFixed(1)}</td>
+                <td class="carbs">${recipe.carbs.toFixed(1)}</td>
+                <td class="fat">${recipe.fat.toFixed(1)}</td>
+                <td class="price">₱${recipe.price.toFixed(2)}</td>
+                <td><button type="button" class="removeBtn" style="background: #ef4444; color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer;">×</button></td>
+            </tr>
+        `);
+        ingredientsTable.append(row);
+    }
+
+    // Handle amount changes
+    ingredientsTable.on('input', '.servingInput', function() {
+        const row = $(this).closest('tr');
+        const type = row.data('type');
+        
+        if (type === 'ingredient') {
+            // For ingredients: calculate based on unit amount
+            const inputAmount = parseFloat($(this).val()) || 0;
+            const servingValue = parseFloat(row.data('serving-value'));
+            const multiplier = inputAmount / servingValue; // How many servings
+
+            const baseCalories = parseFloat(row.data('base-calories'));
+            const baseProtein = parseFloat(row.data('base-protein'));
+            const baseCarbs = parseFloat(row.data('base-carbs'));
+            const baseFat = parseFloat(row.data('base-fat'));
+            const basePrice = parseFloat(row.data('base-price'));
+
+            row.find('.calories').text((baseCalories * multiplier).toFixed(1));
+            row.find('.protein').text((baseProtein * multiplier).toFixed(1));
+            row.find('.carbs').text((baseCarbs * multiplier).toFixed(1));
+            row.find('.fat').text((baseFat * multiplier).toFixed(1));
+            row.find('.price').text('₱' + (basePrice * multiplier).toFixed(2));
+        } else {
+            // For recipes: multiply by quantity
+            const quantity = parseFloat($(this).val()) || 0;
+
+            const baseCalories = parseFloat(row.data('base-calories'));
+            const baseProtein = parseFloat(row.data('base-protein'));
+            const baseCarbs = parseFloat(row.data('base-carbs'));
+            const baseFat = parseFloat(row.data('base-fat'));
+            const basePrice = parseFloat(row.data('base-price'));
+
+            row.find('.calories').text((baseCalories * quantity).toFixed(1));
+            row.find('.protein').text((baseProtein * quantity).toFixed(1));
+            row.find('.carbs').text((baseCarbs * quantity).toFixed(1));
+            row.find('.fat').text((baseFat * quantity).toFixed(1));
+            row.find('.price').text('₱' + (basePrice * quantity).toFixed(2));
+        }
+
+        updateTotals();
+    });
+
+    // Remove item
+    ingredientsTable.on('click', '.removeBtn', function() {
+        $(this).closest('tr').remove();
+        updateTotals();
+    });
+
+    // Update totals
+    function updateTotals() {
+        let totalCalories = 0, totalProtein = 0, totalCarbs = 0, totalFat = 0, totalPrice = 0;
+
+        $('#ingredientsTable tbody tr').each(function() {
+            totalCalories += parseFloat($(this).find('.calories').text()) || 0;
+            totalProtein += parseFloat($(this).find('.protein').text()) || 0;
+            totalCarbs += parseFloat($(this).find('.carbs').text()) || 0;
+            totalFat += parseFloat($(this).find('.fat').text()) || 0;
+            const priceText = $(this).find('.price').text().replace('₱', '');
+            totalPrice += parseFloat(priceText) || 0;
+        });
+
+        $('#totalCalories').text(totalCalories.toFixed(1));
+        $('#totalProtein').text(totalProtein.toFixed(1));
+        $('#totalCarbs').text(totalCarbs.toFixed(1));
+        $('#totalFat').text(totalFat.toFixed(1));
+        $('#totalPrice').text('₱' + totalPrice.toFixed(2));
+    }
+
+    // Serialize data before submitting
+    $('#recipeForm').on('submit', function(e) {
+        e.preventDefault();
+
+        const ingredients = [];
+        const recipes = [];
+
+        $('#ingredientsTable tbody tr').each(function() {
+            const type = $(this).data('type');
+            const id = $(this).data('id');
+            const inputValue = parseFloat($(this).find('.servingInput').val()) || 0;
+
+            if (type === 'ingredient') {
+                // Convert unit amount to servings
+                const servingValue = parseFloat($(this).data('serving-value'));
+                const quantity = inputValue / servingValue; // Number of servings
+                ingredients.push({ id, serving: quantity });
+            } else if (type === 'recipe') {
+                // For recipes, it's already a multiplier
+                recipes.push({ id, quantity: inputValue });
+            }
+        });
+
+        $('#itemsField').val(JSON.stringify(ingredients));
+        $('#recipeItemsField').val(JSON.stringify(recipes));
+        this.submit();
+    });
+
+    // Initialize totals on page load
+    $(document).ready(function() {
+        updateTotals();
+    });
+</script>
+
 </body>
 </html>

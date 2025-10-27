@@ -32,7 +32,9 @@
                 </thead>
                 <tbody>
                     {% for i in ingredients %}
-                    <tr class="clickable-row" data-href="{% url 'ingredient_edit' i.id %}" style="cursor:pointer;">
+                    <tr class="clickable-row" data-href="{% url 'ingredient_edit' i.id %}"  style="cursor:pointer; transition: all 0.2s ease;" 
+                    onmouseover="this.style.background='var(--accent-light)'; this.style.transform='translateX(4px)'; this.style.boxShadow='0 1px 2px 0 rgba(0, 0, 0, 0.05)';" 
+                    onmouseout="this.style.background=''; this.style.transform=''; this.style.boxShadow='';">
                         <td><strong>{{ i.name }}</strong></td>
                         <td>{{ i.serving_size_value }} {{ i.get_serving_size_unit_display }}</td>
                         <td>{{ i.servings_per_container }}</td>

@@ -29,7 +29,9 @@
                 </thead>
                 <tbody>
                     {% for r in recipes %}
-                    <tr class="clickable-row" data-href="{% url 'recipe_edit' r.id %}" style="cursor:pointer;">
+                    <tr class="clickable-row" data-href="{% url 'recipe_edit' r.id %}"  style="cursor:pointer; transition: all 0.2s ease;" 
+                    onmouseover="this.style.background='var(--accent-light)'; this.style.transform='translateX(4px)'; this.style.boxShadow='0 1px 2px 0 rgba(0, 0, 0, 0.05)';" 
+                    onmouseout="this.style.background=''; this.style.transform=''; this.style.boxShadow='';">
                         <td><strong>{{ r.name }}</strong></td>
                         <td>{{ r.total_calories|floatformat:1 }}</td>
                         <td>{{ r.total_protein|floatformat:1 }}g</td>
