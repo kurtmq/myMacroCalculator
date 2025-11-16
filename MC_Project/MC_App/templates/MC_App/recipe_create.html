@@ -221,7 +221,7 @@
             servingValue: parseFloat($this.data('serving-value')),
             servingUnit: $this.data('serving-unit')
         };
-        modal.hide();
+        modal.removeClass('show');
         addIngredientRow(ing);
         updateTotals();
     });
@@ -238,7 +238,7 @@
             fat: parseFloat($this.data('fat')),
             price: parseFloat($this.data('price'))
         };
-        modal.hide();
+        modal.removeClass('show');
         addRecipeRow(recipe);
         updateTotals();
     });
